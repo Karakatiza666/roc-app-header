@@ -137,7 +137,7 @@ order = |graph, nodes| {
 			$moved = Bool.True
 		}
 	}
-	if $left.is_empty() Ok($done) else Err(Cycle)
+	if ($left.is_empty()) Ok($done) else Err(Cycle)
 }
 
 ## The oracle: the URL texts of the winners, or Err(Cycle), or Err(Conflict) when a root pin is
@@ -161,7 +161,7 @@ oracle = |graph| {
 			Err(_) =>
 				match needs.first() {
 					Ok(first) => {
-						best = needs.fold(first, |acc, j| if higher(version(g, j).1, version(g, acc).1) j else acc)
+						best = needs.fold(first, |acc, j| if (higher(version(g, j).1, version(g, acc).1)) j else acc)
 						$winners = $winners.append((g, best))
 					}
 
@@ -169,7 +169,7 @@ oracle = |graph| {
 				}
 		}
 	}
-	if $conflict Err(Conflict) else Ok(Set.from_list($winners.map(|(g, j)| url_text(g, j))))
+	if ($conflict) Err(Conflict) else Ok(Set.from_list($winners.map(|(g, j)| url_text(g, j))))
 }
 
 url_of : U64, U64 -> PackageUrl
@@ -191,7 +191,7 @@ test = |bytes| {
 		(Err(Conflict), Err(VersionConflict(_))) => Bool.True
 		_ => Bool.False
 	}
-	if agrees Fuzz.keep else crash "Mvs.select disagrees with the oracle"
+	if (agrees) Fuzz.keep else crash "Mvs.select disagrees with the oracle"
 }
 
 target = Fuzz.target_with({

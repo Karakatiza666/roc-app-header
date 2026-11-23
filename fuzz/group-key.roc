@@ -33,7 +33,7 @@ chars = |table, picks| Str.from_utf8(picks.map(|p| table.get(p.to_u64() % table.
 
 ## A path segment with no digit and no dot. Never empty.
 word : List(U8) -> Str
-word = |picks| if picks.is_empty() "a" else chars(word_chars, picks)
+word = |picks| if (picks.is_empty()) "a" else chars(word_chars, picks)
 
 Input := {
 	scheme : U8,
@@ -74,12 +74,12 @@ Case : {
 
 make : Input -> Case
 make = |input| {
-	scheme = if input.scheme % 2 == 0 "https://" else "http://"
+	scheme = if (input.scheme % 2 == 0) "https://" else "http://"
 	host = hosts.get(input.host.to_u64() % hosts.len()) ?? "github.com"
 	segs = input.segs.map(word)
 	extra = input.extra.map(word)
-	prefix = "${chars(letters, input.prefix)}${if input.dash "-" else ""}"
-	suffix = if input.suffix.is_empty() "" else "-${chars(letters, input.suffix)}"
+	prefix = "${chars(letters, input.prefix)}${if (input.dash) "-" else ""}"
+	suffix = if (input.suffix.is_empty()) "" else "-${chars(letters, input.suffix)}"
 	# Always 44 characters, the length of most base58 BLAKE3 hashes (Design 2).
 	hash = chars(base58, input.hash.concat(List.repeat(57, 44)).take_first(44))
 	join = |parts| Str.join_with(parts, "/")
@@ -88,13 +88,13 @@ make = |input| {
 	run = "${v.major.to_str()}.${v.minor.to_str()}.${v.patch.to_str()}"
 	match input.mode {
 		2 => {
-			tag = if "${prefix}${suffix}".is_empty() "latest" else "${prefix}${suffix}"
+			tag = if ("${prefix}${suffix}".is_empty()) "latest" else "${prefix}${suffix}"
 			{ url: url_of(tag, segs), want: NoVersion }
 		}
 
 		3 => {
 			# A second run, as a whole segment before the tag. Not 0.0.0, so that only one rule applies.
-			second = if v == { major: 0, minor: 0, patch: 0 } "${prefix}0.0.1${suffix}" else "${prefix}${run}${suffix}"
+			second = if (v == { major: 0, minor: 0, patch: 0 }) "${prefix}0.0.1${suffix}" else "${prefix}${run}${suffix}"
 			{ url: url_of(second, segs.append("1.0.0")), want: ManyVersions }
 		}
 
@@ -103,7 +103,7 @@ make = |input| {
 				{ url: url_of("${prefix}${run}${suffix}", segs), want: ZeroVersion }
 			} else {
 				form = "${host}/${join(segs.concat(["${prefix}{v}${suffix}"]).concat(extra))}/"
-				series = if v.major >= 1 v.major.to_str() else "0.${v.minor.to_str()}"
+				series = if (v.major >= 1) v.major.to_str() else "0.${v.minor.to_str()}"
 				{ url: url_of("${prefix}${run}${suffix}", segs), want: Good({ version: v, hash, form, series }) }
 			}
 	}
@@ -128,7 +128,7 @@ test = |input| {
 		(ZeroVersion, Err(ZeroVersion)) => Bool.True
 		_ => Bool.False
 	}
-	if agrees Fuzz.keep else crash "PackageUrl.parse disagrees with the group rule"
+	if (agrees) Fuzz.keep else crash "PackageUrl.parse disagrees with the group rule"
 }
 
 target = Fuzz.target_with({

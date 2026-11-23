@@ -100,11 +100,11 @@ Lex :: [].{
 	## the line break when it has no closing quote.
 	char_end : List(U8), U64 -> U64
 	char_end = |bytes, start| {
-		var $i = if at(bytes, start + 1) == '\\' start + 3 else start + 2
+		var $i = if (at(bytes, start + 1) == '\\') start + 3 else start + 2
 		while $i < bytes.len() and at(bytes, $i) != '\'' and at(bytes, $i) != '\n' {
 			$i = $i + 1
 		}
-		if at(bytes, $i) == '\'' $i + 1 else $i
+		if (at(bytes, $i) == '\'') $i + 1 else $i
 	}
 
 	## The index after the bracket that closes the bracket at `start`. Strings,
@@ -146,9 +146,9 @@ Lex :: [].{
 
 	## The closing bracket of an opening bracket, or 0.
 	closer : U8 -> U8
-	closer = |b| if b == '{' '}' else if b == '[' ']' else if b == '(' ')' else 0
+	closer = |b| if (b == '{') '}' else if (b == '[') ']' else if (b == '(') ')' else 0
 
 	## The bytes from `start` to `end` as text.
 	text : List(U8), U64, U64 -> Str
-	text = |bytes, start, end| Str.from_utf8_lossy(bytes.sublist({ start, len: if end > start end - start else 0 }))
+	text = |bytes, start, end| Str.from_utf8_lossy(bytes.sublist({ start, len: if (end > start) end - start else 0 }))
 }

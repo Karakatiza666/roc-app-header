@@ -275,7 +275,7 @@ record_entry = |bytes, i| {
 	k = Lex.skip_trivia(bytes, colon + 1)
 	w = Lex.word_end(bytes, k)
 	is_platform = Lex.text(bytes, k, w) == "platform"
-	quote = if is_platform Lex.skip_trivia(bytes, w) else k
+	quote = if (is_platform) Lex.skip_trivia(bytes, w) else k
 	if Lex.at(bytes, quote) != '"' {
 		return Err(Bad(quote))
 	}
@@ -295,11 +295,11 @@ splice = |bytes, span, text|
 
 ## `name: "value"` or `name: platform "value"`.
 entry_text : { name : Str, value : Str, is_platform : Bool } -> Str
-entry_text = |entry| if entry.is_platform "${entry.name}: platform \"${entry.value}\"" else "${entry.name}: \"${entry.value}\""
+entry_text = |entry| if (entry.is_platform) "${entry.name}: platform \"${entry.value}\"" else "${entry.name}: \"${entry.value}\""
 
 ## True when the bytes from `start` to `end` are spaces, tabs and line breaks only.
 all_space : List(U8), U64, U64 -> Bool
-all_space = |bytes, start, end| bytes.sublist({ start, len: if end > start end - start else 0 }).all(|b| Lex.is_blank(b) or b == '\n')
+all_space = |bytes, start, end| bytes.sublist({ start, len: if (end > start) end - start else 0 }).all(|b| Lex.is_blank(b) or b == '\n')
 
 ## The text with the new entry after the last entry of the record.
 added : List(U8), { open : U64, close : U64 }, Try(Entry, _), Str -> Str
@@ -318,18 +318,18 @@ added = |bytes, record, last_entry, text| match last_entry {
 		has_comma = Lex.at(bytes, comma) == ','
 		eol = Lex.line_end(bytes, after)
 		# The new line has the line break of the line of the last entry.
-		nl = if eol > 0 and Lex.at(bytes, eol - 1) == '\r' "\r\n" else "\n"
+		nl = if (eol > 0 and Lex.at(bytes, eol - 1) == '\r') "\r\n" else "\n"
 		if !bytes.sublist({ start: record.open, len: record.close - record.open }).contains('\n') {
 			# One line.
 			splice(bytes, { start: after, end: after }, ", ${text}")
 		} else if eol > record.close {
 			# Many lines, with the `}` on the line of the last entry.
-			at = if has_comma comma + 1 else after
-			splice(bytes, { start: at, end: at }, "${if has_comma "" else ","}${nl}${indent(bytes, last.span.start)}${text},")
+			at = if (has_comma) comma + 1 else after
+			splice(bytes, { start: at, end: at }, "${if (has_comma) "" else ","}${nl}${indent(bytes, last.span.start)}${text},")
 		} else {
 			# Many lines: a new line after the line of the last entry.
 			with_line = splice(bytes, { start: eol + 1, end: eol + 1 }, "${indent(bytes, last.span.start)}${text},${nl}")
-			if has_comma with_line else splice(with_line.to_utf8(), { start: after, end: after }, ",")
+			if (has_comma) with_line else splice(with_line.to_utf8(), { start: after, end: after }, ",")
 		}
 	}
 }
@@ -347,8 +347,8 @@ removed_span = |bytes, record, count, entry| {
 	# After the entry: blanks, a `,`, blanks, then a comment.
 	comma = Lex.skip_blanks(bytes, entry.end)
 	has_comma = Lex.at(bytes, comma) == ','
-	after_comma = if has_comma Lex.skip_blanks(bytes, comma + 1) else comma
-	eol = if Lex.at(bytes, after_comma) == '#' Lex.line_end(bytes, after_comma) else after_comma
+	after_comma = if (has_comma) Lex.skip_blanks(bytes, comma + 1) else comma
+	eol = if (Lex.at(bytes, after_comma) == '#') Lex.line_end(bytes, after_comma) else after_comma
 	line = Lex.line_start(bytes, entry.start)
 	if line > record.open and all_space(bytes, line, entry.start) and Lex.at(bytes, eol) == '\n' and eol < record.close {
 		# Many lines: the whole line of the entry.
@@ -375,5 +375,5 @@ previous_byte = |bytes, i| {
 	while $i > 0 and (Lex.is_blank(Lex.at(bytes, $i - 1)) or Lex.at(bytes, $i - 1) == '\n') {
 		$i = $i - 1
 	}
-	if $i > 0 $i - 1 else 0
+	if ($i > 0) $i - 1 else 0
 }

@@ -96,7 +96,7 @@ value_of : Input -> Str
 value_of = |input| chars(value_chars, input.value)
 
 name_of : Input -> Str
-name_of = |input| if input.name.is_empty() "x" else chars(name_chars, input.name)
+name_of = |input| if (input.name.is_empty()) "x" else chars(name_chars, input.name)
 
 ## The bytes of a span as text.
 slice : Str, { start : U64, end : U64 } -> Str
@@ -124,7 +124,7 @@ test = |input| {
 	value = value_of(input)
 	before = slice(source, { start: 0, end: e.value_span.start })
 	after = slice(source, { start: e.value_span.end, end: source.count_utf8_bytes() })
-	if Header.set_value(source, e.name, value) == Ok("${before}${value}${after}") Fuzz.keep else crash "set_value changed bytes outside the value span"
+	if (Header.set_value(source, e.name, value) == Ok("${before}${value}${after}")) Fuzz.keep else crash "set_value changed bytes outside the value span"
 }
 
 target = Fuzz.target_with({

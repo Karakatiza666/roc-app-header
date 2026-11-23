@@ -45,7 +45,7 @@ test = |input| {
 		Err(_) => 0
 	}
 	n_imports = Imports.scan(text).len()
-	if n_entries + n_imports >= 0 Fuzz.keep else crash "unreachable"
+	if (n_entries + n_imports >= 0) Fuzz.keep else crash "unreachable"
 }
 
 target = Fuzz.target_with({

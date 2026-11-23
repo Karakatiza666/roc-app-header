@@ -100,12 +100,12 @@ group_edges = |nodes| nodes.fold(
 	Dict.empty(),
 	|acc, _, node| {
 		from = node.url.group()
-		start = if acc.contains(from) acc else acc.insert(from, Set.empty())
+		start = if (acc.contains(from)) acc else acc.insert(from, Set.empty())
 		node.deps.fold(
 			start,
 			|inner, e| {
 				to = e.url.group()
-				with_to = if inner.contains(to) inner else inner.insert(to, Set.empty())
+				with_to = if (inner.contains(to)) inner else inner.insert(to, Set.empty())
 				with_to.update(from, |old| Ok((old ?? Set.empty()).insert(to)))
 			},
 		)
@@ -224,7 +224,7 @@ winner = |into| {
 	} else {
 		top = urls.fold(
 			urls.first() ?? return Err(NoEdge),
-			|best, u| if newer(u, best) u else best,
+			|best, u| if (newer(u, best)) u else best,
 		)
 		first_text(urls.keep_if(|u| u.version() == top.version()))
 	}
@@ -247,7 +247,7 @@ newer = |a, b| {
 ## The URL whose text is first in byte order.
 first_text : List(PackageUrl) -> Try(PackageUrl, [NoEdge])
 first_text = |urls| match urls.first() {
-	Ok(start) => Ok(urls.fold(start, |best, u| if bytes_before(u.to_str().to_utf8(), best.to_str().to_utf8()) u else best))
+	Ok(start) => Ok(urls.fold(start, |best, u| if (bytes_before(u.to_str().to_utf8(), best.to_str().to_utf8())) u else best))
 	Err(_) => Err(NoEdge)
 }
 
@@ -270,7 +270,7 @@ bytes_before = |a, b| {
 unique_texts : List(PackageUrl) -> List(PackageUrl)
 unique_texts = |urls| urls.fold(
 	{ seen: Set.empty(), out: [] },
-	|acc, u| if acc.seen.contains(u.to_str()) acc else { seen: acc.seen.insert(u.to_str()), out: acc.out.append(u) },
+	|acc, u| if (acc.seen.contains(u.to_str())) acc else { seen: acc.seen.insert(u.to_str()), out: acc.out.append(u) },
 ).out
 
 ## The followed edges of one group and version with two or more hashes.
@@ -297,7 +297,7 @@ version_conflicts = |root, followed| {
 		{ seen: Set.empty(), out: [] },
 		|acc, c| {
 			key = (c.pinned.to_str(), c.needed.to_str(), c.by.to_str())
-			if acc.seen.contains(key) acc else { seen: acc.seen.insert(key), out: acc.out.append(c) }
+			if (acc.seen.contains(key)) acc else { seen: acc.seen.insert(key), out: acc.out.append(c) }
 		},
 	).out
 }

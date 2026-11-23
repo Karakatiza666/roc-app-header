@@ -67,7 +67,7 @@ PackageUrl :: {
 
 	## The major (`4` for `4.2.0`), or `0.minor` below 1.0 (`0.25` for `0.25.1`).
 	series : PackageUrl -> Str
-	series = |url| if url.major >= 1 url.major.to_str() else "0.${url.minor.to_str()}"
+	series = |url| if (url.major >= 1) url.major.to_str() else "0.${url.minor.to_str()}"
 
 	## The group key: the URL form and the series. Two URLs are the same
 	## package to Roc when their groups are equal.

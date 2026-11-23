@@ -97,7 +97,7 @@ value_of : Input -> Str
 value_of = |input| chars(value_chars, input.value)
 
 name_of : Input -> Str
-name_of = |input| if input.name.is_empty() "x" else chars(name_chars, input.name)
+name_of = |input| if (input.name.is_empty()) "x" else chars(name_chars, input.name)
 
 ## The bytes of a span as text.
 slice : Str, { start : U64, end : U64 } -> Str
@@ -125,7 +125,7 @@ test = |input| {
 		Err(_) => crash "a seed did not parse"
 	}
 	old = triples(header)
-	k = if old.is_empty() 0 else input.entry % old.len()
+	k = if (old.is_empty()) 0 else input.entry % old.len()
 	name = (old.get(k) ?? ("", "", Bool.False)).0
 	value = value_of(input)
 	edited = match input.op {
@@ -134,7 +134,7 @@ test = |input| {
 		2 => {
 			new = name_of(input)
 			if old.any(|(n, _, _)| n == new) {
-				return if Header.add_entry(source, { name: new, value, is_platform: Bool.False }) == Err(Exists) Fuzz.keep else crash "add_entry of a name in the header did not give Exists"
+				return if (Header.add_entry(source, { name: new, value, is_platform: Bool.False }) == Err(Exists)) Fuzz.keep else crash "add_entry of a name in the header did not give Exists"
 			}
 			Header.add_entry(source, { name: new, value, is_platform: Bool.False }).map_ok(|out| (out, |t| t.keep_if(|(n, _, _)| n != new) == old and t.contains((new, value, Bool.False))))
 		}

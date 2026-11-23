@@ -104,7 +104,7 @@ path_prefix = |path| {
 		if rest.starts_with(['.', '.', '/']) {
 			$n = $n + 3
 		} else if rest.starts_with(['.', '/']) or ($n == 0 and rest.starts_with(['/'])) {
-			$n = $n + if rest.starts_with(['/']) 1 else 2
+			$n = $n + if (rest.starts_with(['/'])) 1 else 2
 		} else {
 			break
 		}

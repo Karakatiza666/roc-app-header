@@ -96,7 +96,7 @@ matches_sidecar = |source, tsv| match Header.parse(source) {
 same_after_fmt : Str, Str -> Bool
 same_after_fmt = |source, formatted| match (Header.parse(source), Header.parse(formatted)) {
 	(Ok(a), Ok(b)) => {
-		no_pin = |h| Set.from_list(triples(h).map(|(n, v, p)| if n == "roc" (n, "", p) else (n, v, p)))
+		no_pin = |h| Set.from_list(triples(h).map(|(n, v, p)| if (n == "roc") (n, "", p) else (n, v, p)))
 		a.kind() == b.kind() and Set.from_list(a.exposed()) == Set.from_list(b.exposed()) and no_pin(a) == no_pin(b)
 	}
 

@@ -46,7 +46,7 @@ selected = |root, deps| match Mvs.select(root, deps) {
 	Ok(urls) => {
 		texts = Set.from_list(urls.map(|u| u.to_str()))
 		# One URL for each group: no URL twice.
-		if texts.len() == urls.len() Ok(texts) else Err(Failed)
+		if (texts.len() == urls.len()) Ok(texts) else Err(Failed)
 	}
 
 	Err(_) => Err(Failed)

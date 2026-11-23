@@ -42,9 +42,9 @@ for f in fuzz/*.roc; do
 	"$FUZZ_ROC" build --fuzz "$f" --output="$W/fuzz/$n" >"$W/fuzz/$n.build.log" 2>&1; rc=$?
 	result "build $f" $rc
 	[ $rc = 0 ] || continue
-	rm -rf "$W/fuzz/art-$n"
-	"$W/fuzz/$n" run --runs="$RUNS" --seed=1 --time=0 --artifact-dir="$W/fuzz/art-$n" >"$W/fuzz/$n.log" 2>&1; rc=$?
-	grep -m1 -E '^Done|roc crashed' "$W/fuzz/$n.log"
+	rm -rf "$W/fuzz/rep-$n"
+	"$W/fuzz/$n" run --runs="$RUNS" --seed=1 --time=0 --report-dir="$W/fuzz/rep-$n" >"$W/fuzz/$n.log" 2>&1; rc=$?
+	grep -m1 -E 'exploration|roc crashed' "$W/fuzz/$n.log"
 	result "fuzz $n" $rc
 done
 

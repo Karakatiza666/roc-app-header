@@ -1,5 +1,5 @@
 app [target] {
-	fuzz: platform "https://github.com/lukewilliamboswell/roc-fuzz/releases/download/0.4.3/41NK5FShyGC9Z8HNpUdUeXMWwLmLNfFxsfmLvdPL4Fxb.tar.zst",
+	fuzz: platform "https://github.com/lukewilliamboswell/roc-fuzz/releases/download/0.7.0/HBigHQhVZWEF2EkLxpYK35u8P6UNsAmPYxpNFTxXK1Br.tar.zst",
 	pkg: "../package/main.roc",
 }
 
@@ -20,6 +20,9 @@ seeds : List(Str)
 seeds = [basic_cli, basic_webserver, roc_parser, template_zig, path, app_webserver]
 
 Input := { seed : U64, cut : U64, drop : U64, insert : Str, raw : Bool }.{
+	parser_for : _
+	encoder_for : _
+
 	generator_for : Fuzz.FuzzEncoding -> Fuzz.Generator(Input)
 	generator_for = |_| { seed: Fuzz.u64, cut: Fuzz.u64, drop: Fuzz.u64_in(0, 40), insert: Fuzz.str, raw: Fuzz.map(Fuzz.u8_in(0, 3), |b| b == 0) }.Fuzz
 }
@@ -49,6 +52,7 @@ test = |input| {
 }
 
 target = Fuzz.target_with({
+	examples: [],
 	name: "header-total",
 	generator: Input.generator_for(Default),
 	test,

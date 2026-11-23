@@ -55,7 +55,7 @@ expect Imports.scan("import pf.Stdout\nimport Geo\n").map(|i| i.name) == ["Stdou
 | Layer | Files | Tool |
 | --- | --- | --- |
 | L0 | `tests/*.roc`. `tests/seeds.roc` compares with real headers (`tests/fixtures/seeds/`, sources and licenses in `SOURCES.tsv`) and with the output of `roc fmt`. | `roc test` |
-| L1 | `fuzz/*.roc` (properties: parse never crashes, an edit changes only its span, parse after an edit, the group key, MVS against an independent oracle) | [roc-fuzz](https://github.com/lukewilliamboswell/roc-fuzz) 0.4.3 |
+| L1 | `fuzz/*.roc` (properties: parse never crashes, an edit changes only its span, parse after an edit, the group key, MVS against an independent oracle) | [roc-fuzz](https://github.com/lukewilliamboswell/roc-fuzz) 0.7.0 |
 
 `scripts/test.sh [ROC [FUZZ_ROC]]` runs `roc check`, `roc fmt --check`, the L0 tests and the L1 targets. `scripts/seeds.sh` makes the expected seed values again with `roc`. Use the nightly in `.roc-version`. CI (`.github/workflows/ci.yml`) runs the same checks on that nightly.
 

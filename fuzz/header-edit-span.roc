@@ -1,5 +1,5 @@
 app [target] {
-	fuzz: platform "https://github.com/lukewilliamboswell/roc-fuzz/releases/download/0.4.3/41NK5FShyGC9Z8HNpUdUeXMWwLmLNfFxsfmLvdPL4Fxb.tar.zst",
+	fuzz: platform "https://github.com/lukewilliamboswell/roc-fuzz/releases/download/0.7.0/HBigHQhVZWEF2EkLxpYK35u8P6UNsAmPYxpNFTxXK1Br.tar.zst",
 	pkg: "../package/main.roc",
 }
 
@@ -85,6 +85,9 @@ chars : List(U8), List(U8) -> Str
 chars = |table, picks| Str.from_utf8(picks.map(|p| table.get(p.to_u64() % table.len()) ?? 'x')) ?? "x"
 
 Input := { seed : U64, entry : U64, op : U8, value : List(U8), name : List(U8) }.{
+	parser_for : _
+	encoder_for : _
+
 	generator_for : Fuzz.FuzzEncoding -> Fuzz.Generator(Input)
 	generator_for = |_| { seed: Fuzz.u64, entry: Fuzz.u64, op: Fuzz.u8_in(0, 2), value: Fuzz.list(Fuzz.u8, 100), name: Fuzz.list(Fuzz.u8, 8) }.Fuzz
 }
@@ -128,6 +131,7 @@ test = |input| {
 }
 
 target = Fuzz.target_with({
+	examples: [],
 	name: "header-edit-span",
 	generator: Input.generator_for(Default),
 	test,

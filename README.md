@@ -26,7 +26,7 @@ Read and edit the header of a Roc app, package or platform, scan its `import` li
 Add the release to the header of your app, package or platform:
 
 ```roc
-header: "https://github.com/Karakatiza666/roc-app-header/releases/download/0.1.0/HDQnwrX2Bcm8Jsf8RMC9ZdbVGwPiqD2nCLP7Zf1osfgU.tar.zst",
+header: "https://github.com/Karakatiza666/roc-app-header/releases/download/0.1.1/Ev4sYWkY8XDbQsPxtaaXZaARYjH9KS2x2dbmVch2d4qS.tar.zst",
 ```
 
 Then:

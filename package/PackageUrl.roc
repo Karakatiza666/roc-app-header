@@ -35,7 +35,7 @@ PackageUrl :: {
 	parse : Str -> Try(PackageUrl, [BadScheme, NoHash, NoVersion, ManyVersions, ZeroVersion])
 	parse = |text| {
 		rest = after_scheme(text)?
-		{ hash, cut } = hash_segment(rest)?
+		{ hash: hash_text, cut } = hash_segment(rest)?
 		bytes = rest.to_utf8()
 		run = match runs(bytes) {
 			[] => return Err(NoVersion)
@@ -45,7 +45,7 @@ PackageUrl :: {
 		if run.major == 0 and run.minor == 0 and run.patch == 0 {
 			return Err(ZeroVersion)
 		}
-		Ok({ text, form: form_of(bytes, run, cut), major: run.major, minor: run.minor, patch: run.patch, hash })
+		Ok({ text, form: form_of(bytes, run, cut), major: run.major, minor: run.minor, patch: run.patch, hash: hash_text })
 	}
 
 	## The URL text, as `parse` got it.

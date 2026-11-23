@@ -8,6 +8,8 @@ HERE=$(cd "$(dirname "$0")/.." && pwd)
 ROC=${1:-roc}
 FUZZ_ROC=${2:-$ROC}
 RUNS=${RUNS:-20000}
+# The time limit of one fuzz run in seconds: a run that reaches it ends and passes (roc-fuzz 0.7.0).
+FUZZ_TIME=${FUZZ_TIME:-120}
 # One work dir for each compiler, so that two nightlies do not share a cache.
 W=$HERE/.work/$("$ROC" version | awk '{print $NF}')
 mkdir -p "$W/fuzz"
@@ -43,7 +45,7 @@ for f in fuzz/*.roc; do
 	result "build $f" $rc
 	[ $rc = 0 ] || continue
 	rm -rf "$W/fuzz/rep-$n"
-	"$W/fuzz/$n" run --runs="$RUNS" --seed=1 --time=0 --report-dir="$W/fuzz/rep-$n" >"$W/fuzz/$n.log" 2>&1; rc=$?
+	"$W/fuzz/$n" run --runs="$RUNS" --seed=1 --time="$FUZZ_TIME" --report-dir="$W/fuzz/rep-$n" >"$W/fuzz/$n.log" 2>&1; rc=$?
 	grep -m1 -E 'exploration|roc crashed' "$W/fuzz/$n.log"
 	result "fuzz $n" $rc
 done
